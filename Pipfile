@@ -9,6 +9,7 @@ flask-sqlalchemy = "*"
 flask-migrate = "*"
 importlib-metadata = "6.0.0"
 importlib-resources = "5.10.0"
+sqlalchemy-serializer = "1.4.1"
 faker = "14.2.0"
 
 [dev-packages]

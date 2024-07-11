@@ -1,48 +1,27 @@
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import MetaData
+from config import db
 from sqlalchemy.ext.associationproxy import association_proxy
+from sqlalchemy_serializer import SerializerMixin
 
 
-metadata = MetaData(naming_convention={
-    "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
-})
+class Doctor(db.Model):
 
-db = SQLAlchemy(metadata=metadata)
-
-# BUILD OUT THE FOLLOWING MODELS
-
-# YOU WILL NEED ADDITIONAL COLUMNS FOR THE FOREIGN KEYS
-
-
-class VideoGame(db.Model):
-    
-    __tablename__ = 'video_games_table'
+    __tablename__ = 'doctors_table'
 
     id = db.Column(db.Integer, primary_key=True)
-
     name = db.Column(db.String)
-
-    reviews = db.relationship('Review', back_populates='videogame')
-
-    publications = association_proxy('reviews', 'publication')
 
     def to_dict(self):
         return {
             "id": self.id,
-            "name": self.name,
-            "publications": [ pub.to_dict() for pub in self.publications ]
+            "name": self.name
         }
 
+class Patient(db.Model):
 
-class Publication(db.Model):
-
-    __tablename__ = 'publications_table'
+    __tablename__ = 'patients_table'
 
     id = db.Column(db.Integer, primary_key=True)
-
     name = db.Column(db.String)
-
-    reviews = db.relationship('Review', back_populates='publication')
 
     def to_dict(self):
         return {
@@ -51,35 +30,40 @@ class Publication(db.Model):
         }
 
 
-class Review(db.Model):
+class Appointment(db.Model):
 
-    __tablename__ = 'reviews_table'
-
-    id = db.Column(db.Integer, primary_key=True)
-
-    rating = db.Column(db.Integer, default=0)
-
-    videogame_id = db.Column(db.Integer, db.ForeignKey( 'video_games_table.id' ))
-    publication_id = db.Column(db.Integer, db.ForeignKey( 'publications_table.id' ))
-
-    publication = db.relationship('Publication', back_populates='reviews')
-    videogame = db.relationship('VideoGame', back_populates='reviews')
+    __tablename__ = 'appointments_table'
 
     def to_dict(self):
         return {
-            "id": self.id,
-            "rating": self.rating,
-            "videogame_id": self.videogame_id,
-            "publication_id": self.publication_id,
-            "videogame": self.videogame.to_dict(),
-            "publication": self.publication.to_dict()
+            "id": self.id
         }
+
+    id = db.Column(db.Integer, primary_key=True)
+
+
+# PRACTICE EXERCISES #
+
+
+# class VideoGame(db.Model):
     
-    def __repr__(self):
-        return f"Review(id={self.id}, rating={self.rating}, publication={self.publication.name})"
+#     __tablename__ = 'video_games_table'
+
+#     id = db.Column(db.Integer, primary_key=True)
+#     title = db.Column(db.String)
 
 
-# Publication ---< Review >--- VideoGame
+# class Publication(db.Model):
 
-                # publication_id  
-                # videogame_id
+#     __tablename__ = 'publications_table'
+
+#     id = db.Column(db.Integer, primary_key=True)
+#     name = db.Column(db.String)
+
+
+# class Review(db.Model):
+
+#     __tablename__ = 'reviews_table'
+
+#     id = db.Column(db.Integer, primary_key=True)
+#     rating = db.Column(db.Integer, default=0)
