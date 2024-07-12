@@ -45,25 +45,25 @@ class Appointment(db.Model):
 # PRACTICE EXERCISES #
 
 
-# class VideoGame(db.Model):
+class VideoGame(db.Model):
     
-#     __tablename__ = 'video_games_table'
+    __tablename__ = 'video_games_table'
 
-#     id = db.Column(db.Integer, primary_key=True)
-#     title = db.Column(db.String)
-
-
-# class Publication(db.Model):
-
-#     __tablename__ = 'publications_table'
-
-#     id = db.Column(db.Integer, primary_key=True)
-#     name = db.Column(db.String)
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String)
 
 
-# class Review(db.Model):
+class Publication(db.Model):
 
-#     __tablename__ = 'reviews_table'
+    __tablename__ = 'publications_table'
 
-#     id = db.Column(db.Integer, primary_key=True)
-#     rating = db.Column(db.Integer, default=0)
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String)
+
+
+class Review(db.Model):
+
+    __tablename__ = 'reviews_table'
+
+    id = db.Column(db.Integer, primary_key=True)
+    rating = db.Column(db.Integer, default=0)
