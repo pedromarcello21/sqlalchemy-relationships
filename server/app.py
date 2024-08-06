@@ -1,11 +1,74 @@
 #!/usr/bin/env python3
 
+from datetime import datetime
 from flask import request
 from config import app, db
-from models import VideoGame, Publication, Review
+from models import VideoGame, Publication, Review, Doctor, Appointment
 
 
 # ROUTES #
+
+# READ
+@app.get('/doctors')
+def all_doctors():
+    all_doctors = Doctor.query.all()
+    doctor_dicts = []
+    for doctor in all_doctors:
+        doctor_dicts.append( doctor.to_dict() )
+    return doctor_dicts, 200
+
+
+# CREATE
+@app.post('/doctors')
+def create_doctor():
+    data = request.json
+    new_doctor = Doctor(name=data['name'])
+    db.session.add(new_doctor)
+    db.session.commit()
+
+    return new_doctor.to_dict(), 201
+
+
+
+# READ
+@app.get('/appointments')
+def all_appointments():
+    all_appointments = Appointment.query.all()
+    appointment_dicts = []
+    for appointment in all_appointments:
+        appointment_dicts.append( appointment.to_dict() )
+    return appointment_dicts, 200
+
+
+# CREATE
+@app.post('/appointments')
+def create_appointment():
+    data = request.json
+
+    new_date = datetime.strptime(data['datetime'], '%m-%d-%Y') # '8-6-2024'
+
+    new_appointment = Appointment(
+        doctor_id=data['doctor_id'], 
+        patient_id=data['patient_id'], 
+        datetime=new_date
+    )
+
+    db.session.add(new_appointment)
+    db.session.commit()
+
+    return new_appointment.to_dict(), 201
+
+
+
+
+
+
+
+
+
+
+
+# EXERCISES #
 
 # VideoGame ROUTES #
 

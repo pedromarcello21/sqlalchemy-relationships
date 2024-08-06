@@ -3,43 +3,47 @@ from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy_serializer import SerializerMixin
 
 
-class Doctor(db.Model):
+class Doctor(db.Model, SerializerMixin):
 
     __tablename__ = 'doctors_table'
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
 
-    def to_dict(self):
-        return {
-            "id": self.id,
-            "name": self.name
-        }
+    appointments = db.relationship('Appointment', back_populates='doctor')
 
-class Patient(db.Model):
+    serialize_rules = ("-appointments.doctor", "patients")
+
+    patients = association_proxy('appointments', 'patient')
+
+
+class Appointment(db.Model, SerializerMixin):
+
+    __tablename__ = 'appointments_table'
+
+    id = db.Column( db.Integer, primary_key=True )
+    doctor_id = db.Column( db.Integer, db.ForeignKey('doctors_table.id') )
+    patient_id = db.Column( db.Integer, db.ForeignKey('patients_table.id') )
+    datetime = db.Column( db.DateTime )
+
+    doctor = db.relationship('Doctor', back_populates='appointments')
+    patient = db.relationship('Patient', back_populates='appointments')
+
+    serialize_rules = ("-doctor", "-patient")
+
+
+class Patient(db.Model, SerializerMixin):
 
     __tablename__ = 'patients_table'
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
 
-    def to_dict(self):
-        return {
-            "id": self.id,
-            "name": self.name
-        }
+    appointments = db.relationship('Appointment', back_populates='patient')
 
+    doctors = db.relationship('appointments', 'doctor')
 
-class Appointment(db.Model):
-
-    __tablename__ = 'appointments_table'
-
-    def to_dict(self):
-        return {
-            "id": self.id
-        }
-
-    id = db.Column(db.Integer, primary_key=True)
+    serialize_rules = ('-appointments.patient',)
 
 
 # PRACTICE EXERCISES #
