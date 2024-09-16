@@ -49,25 +49,46 @@ class Patient(db.Model, SerializerMixin):
 # PRACTICE EXERCISES #
 
 
-class VideoGame(db.Model):
+class VideoGame(db.Model, SerializerMixin):
     
     __tablename__ = 'video_games_table'
 
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String)
 
+    #way to talk to Publication and Review
 
-class Publication(db.Model):
+    publications = db.relationship("Publication", back_populates = "video_game")
+
+    serialize_rules = ("publications.video_game", "reviews")
+
+    reviews = association_proxy('publications', 'video_game')
+
+
+
+class Publication(db.Model, SerializerMixin):
 
     __tablename__ = 'publications_table'
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
 
+    #way to talk to videogame and Review
+    video_games = db.relationship("VideoGame", back_populates = "publication")
 
-class Review(db.Model):
+    # reviews = 
+
+
+
+
+class Review(db.Model, SerializerMixin):
 
     __tablename__ = 'reviews_table'
 
     id = db.Column(db.Integer, primary_key=True)
     rating = db.Column(db.Integer, default=0)
+    
+    # need a foreign key for videogame and publication
+    video_game_id = db.Column(db.Integer, db.ForeignKey('video_games_table'))
+    publication_id = db.Column(db.Integer, db.ForeignKey('publications_table'))
+
